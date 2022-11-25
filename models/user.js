@@ -19,7 +19,19 @@ const userSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            match: [/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/, 'please add valid email']                 }
+            match: [/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/, 'please add valid email']                 
+        },
+        thoughts: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'thought',
+            }
+        ],
+    },
+    {
+        toJSON: {
+            virtuals: true,
+        }
     }
 )
 
