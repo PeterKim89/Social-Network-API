@@ -5,7 +5,6 @@
 // virtual 'friendCount' retrieves length of the user's friends array
 
 const {Schema, model} = require('mongoose');
-const thoughtsSchema = require('./thought.js');
 
 const userSchema = new Schema(
     {
@@ -36,7 +35,7 @@ const userSchema = new Schema(
     },
     {
         toJSON: {
-            getters: true,
+            virtuals: true,
         },
         id: false,
     }
