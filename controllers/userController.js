@@ -8,8 +8,8 @@ const userController = {
 				select: "-__v",
 			})
 			.select("-__v")
-			.then((dbUserData) => {
-				res.json(dbUserData);
+			.then((dbUsersData) => {
+				res.json(dbUsersData);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -41,6 +41,7 @@ const userController = {
 				res.json(dbUserData);
 			})
 			.catch((err) => {
+				console.log(err);
 				res.status(400).json(err);
 			});
 	},
@@ -51,15 +52,65 @@ const userController = {
 				res.json(dbUserData);
 			})
 			.catch((err) => {
+				console.log(err);
 				res.status(500).json(err);
 			});
 	},
 
-	deleteUser(req, res) {},
+	deleteUser(req, res) {
+		User.findOneAndDelete({ _id: req.params.id })
+			.then((dbUserData) => {
+				if (!dbUserData) {
+					return res.status(404).json({ message: "No user with this id!" });
+				} else {
+					res.json(dbUserData);
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				res.status(500).json(err);
+			});
+	},
 
-	createFriend(req, res) {},
+	createFriend(req, res) {
+		User.findOneAndUpdate(
+			{ _id: req.params.id },
+			{ $push: { friends: req.params.friendId } },
+			{ new: true }
+		)
+			.populate({ path: "friends", select: "-__v" })
+			.select("-__v")
+			.then((dbUserData) => {
+				if (!dbUserData) {
+					return res.status(404).json({ message: "No User with this id!" });
+				} else {
+					res.json(dbUserData);
+				}
+			})
+			.catch((err) => {
+				res.json(err);
+			});
+	},
 
-	deleteFriend(req, res) {},
+	deleteFriend(req, res) {
+		User.findOneAndUpdate(
+			{ _id: req.params.id },
+			{ $pull: { friends: req.params.friendId } },
+			{ new: true }
+		)
+			.populate({ path: "friends", select: "-__v" })
+			.select("-__v")
+			.then((dbUserData) => {
+				if (!dbUserData) {
+					return res.status(404).json({ message: "No User with this id!" });
+				} else {
+					res.json(dbUserData);
+				}
+			})
+			.catch((err) => {
+				res.status(400).json(err);
+			});
+	},
 };
 
 module.exports = userController;
