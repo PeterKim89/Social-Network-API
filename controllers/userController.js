@@ -8,8 +8,8 @@ const userController = {
 				select: "-__v",
 			})
 			.select("-__v")
-			.then((dbUsersData) => {
-				res.json(dbUsersData);
+			.then((user) => {
+				res.json(user);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -22,11 +22,11 @@ const userController = {
 			.select("-__v")
 			.populate("friends")
 			.populate("thoughts")
-			.then((dbUserData) => {
-				if (!dbUserData) {
+			.then((user) => {
+				if (!user) {
 					return res.status(404).json({ message: "No user with this id!" });
 				} else {
-					res.json(dbUserData);
+					res.json(user);
 				}
 			})
 			.catch((err) => {
@@ -37,8 +37,8 @@ const userController = {
 
 	createUser(req, res) {
 		User.create(req.body)
-			.then((dbUserData) => {
-				res.json(dbUserData);
+			.then((user) => {
+				res.json(user);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -48,8 +48,8 @@ const userController = {
 
 	updateUser(req, res) {
 		User.updateOne({ _id: req.params.id }, { username: req.body.username })
-			.then((dbUserData) => {
-				res.json(dbUserData);
+			.then((user) => {
+				res.json(user);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -59,11 +59,11 @@ const userController = {
 
 	deleteUser(req, res) {
 		User.findOneAndDelete({ _id: req.params.id })
-			.then((dbUserData) => {
-				if (!dbUserData) {
+			.then((user) => {
+				if (!user) {
 					return res.status(404).json({ message: "No user with this id!" });
 				} else {
-					res.json(dbUserData);
+					res.json(user);
 				}
 			})
 			.catch((err) => {
@@ -80,14 +80,15 @@ const userController = {
 		)
 			.populate({ path: "friends", select: "-__v" })
 			.select("-__v")
-			.then((dbUserData) => {
-				if (!dbUserData) {
+			.then((user) => {
+				if (!user) {
 					return res.status(404).json({ message: "No User with this id!" });
 				} else {
-					res.json(dbUserData);
+					res.json(user);
 				}
 			})
 			.catch((err) => {
+				console.log(err);
 				res.json(err);
 			});
 	},
@@ -100,14 +101,15 @@ const userController = {
 		)
 			.populate({ path: "friends", select: "-__v" })
 			.select("-__v")
-			.then((dbUserData) => {
-				if (!dbUserData) {
+			.then((user) => {
+				if (!user) {
 					return res.status(404).json({ message: "No User with this id!" });
 				} else {
-					res.json(dbUserData);
+					res.json(user);
 				}
 			})
 			.catch((err) => {
+				console.log(err);
 				res.status(400).json(err);
 			});
 	},

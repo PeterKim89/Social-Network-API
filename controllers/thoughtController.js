@@ -3,10 +3,11 @@ const { Thought, User } = require("../models");
 const thoughtController = {
 	getThoughts(req, res) {
 		Thought.find()
-			.then((courses) => {
-				res.json(courses);
+			.then((thought) => {
+				res.json(thought);
 			})
 			.catch((err) => {
+				console.log(err);
 				res.status(500).json(err);
 			});
 	},
@@ -15,21 +16,72 @@ const thoughtController = {
 		Thought.findOne({ _id: req.params.id })
 			.then((thought) => {
 				if (!thought) {
-					res.status(404).json({ message: "No thought with that ID" });
+					res.status(404).json({ message: "No thought with this id" });
 				} else {
 					res.json(thought);
 				}
 			})
 			.catch((err) => {
+				console.log(err);
 				res.status(500).json(err);
 			});
 	},
 
-	createThought(req, res) {},
+	createThought(req, res) {
+		Thought.create(req.body)
+			.then((thought) => {
+				return User.findOneAndUpdate(
+					{ _id: req.body.id },
+					{ $push: { thoughts: thought._id } },
+					{ new: true }
+				);
+			})
+			.then((thought) => {
+				if (!thought) {
+					return res.status(404).json({
+						message: "Thought created, but no user found with this id!",
+					});
+				} else {
+					res.json({ message: "Successfully created thought!" });
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				res.status(500).json(err);
+			});
+	},
 
-	updateThought(req, res) {},
+	updateThought(req, res) {
+		Thought.findOneAndUpdate(
+			{ _id: req.params.id },
+			{ $set: req.body },
+			{ runValidators: true, new: true }
+		)
+			.then((thought) => {
+				if (!thought) {
+					return res.status(404).json({ message: "No thoughts with this id!" });
+				}
+				res.json(thought);
+			})
+			.catch((err) => {
+				console.log(err);
+				res.status(500).json(err);
+			});
+	},
 
-	deleteThought(req, res) {},
+	deleteThought(req, res) {
+		Thought.findOneAndDelete({ _id: req.params.id })
+			.then((thought) => {
+				if (!thought) {
+					return res.status(404).json({ message: "No thoughts with this id!" });
+				} else {
+					res.json(thought);
+				}
+			})
+			.catch((err) => {
+				res.status(400).json(err);
+			});
+	},
 
 	createReaction(req, res) {},
 
