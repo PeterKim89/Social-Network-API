@@ -15,3 +15,5 @@ const thoughtController = {
 
 	deleteReaction(req, res) {},
 };
+
+module.exports = thoughtController;
