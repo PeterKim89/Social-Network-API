@@ -8,8 +8,8 @@ const userController = {
 				select: "-__v",
 			})
 			.select("-__v")
-			.then((userDbData) => {
-				res.json(userDbData);
+			.then((dbUserData) => {
+				res.json(dbUserData);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -18,15 +18,15 @@ const userController = {
 	},
 
 	getSingleUser(req, res) {
-		User.findOne({ _id: req.params.userId })
+		User.findOne({ _id: req.params.id })
 			.select("-__v")
 			.populate("friends")
 			.populate("thoughts")
-			.then((userDbData) => {
-				if (!userDbData) {
+			.then((dbUserData) => {
+				if (!dbUserData) {
 					return res.status(404).json({ message: "No user with this id!" });
 				} else {
-					res.json(userDbData);
+					res.json(dbUserData);
 				}
 			})
 			.catch((err) => {
@@ -37,15 +37,23 @@ const userController = {
 
 	createUser(req, res) {
 		User.create(req.body)
-			.then((userDbData) => {
-				res.json(userDbData);
+			.then((dbUserData) => {
+				res.json(dbUserData);
 			})
 			.catch((err) => {
 				res.status(400).json(err);
 			});
 	},
 
-	updateUser(req, res) {},
+	updateUser(req, res) {
+		User.updateOne({ _id: req.params.id }, { username: req.body.username })
+			.then((dbUserData) => {
+				res.json(dbUserData);
+			})
+			.catch((err) => {
+				res.status(500).json(err);
+			});
+	},
 
 	deleteUser(req, res) {},
 
