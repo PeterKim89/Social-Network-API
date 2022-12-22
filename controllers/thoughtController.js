@@ -1,6 +1,7 @@
 const { Thought, User } = require("../models");
 
 const thoughtController = {
+	// get all thoughts, regardless of users
 	getThoughts(req, res) {
 		Thought.find()
 			.then((thought) => {
@@ -12,11 +13,12 @@ const thoughtController = {
 			});
 	},
 
+	// gets a single specified thought, based on thought id
 	getSingleThought(req, res) {
 		Thought.findOne({ _id: req.params.thoughtId })
 			.then((thought) => {
 				if (!thought) {
-					res.status(404).json({ message: "No thought with this id" });
+					res.status(404).json({ message: "No thoughts found with this id" });
 				} else {
 					res.json(thought);
 				}
@@ -27,6 +29,7 @@ const thoughtController = {
 			});
 	},
 
+	// creates a new thought, associated with a specific user
 	createThought(req, res) {
 		Thought.create(req.body)
 			.then((thought) => {
@@ -39,7 +42,7 @@ const thoughtController = {
 			.then((thought) => {
 				if (!thought) {
 					return res.status(404).json({
-						message: "Thought created, but no user found with this id!",
+						message: "No user found with this id.",
 					});
 				} else {
 					res.json({ message: "Successfully created thought!" });
@@ -51,6 +54,7 @@ const thoughtController = {
 			});
 	},
 
+	// updates a user's thought with a new string
 	updateThought(req, res) {
 		Thought.findOneAndUpdate(
 			{ _id: req.params.thoughtId },
@@ -59,7 +63,9 @@ const thoughtController = {
 		)
 			.then((thought) => {
 				if (!thought) {
-					return res.status(404).json({ message: "No thoughts with this id!" });
+					return res
+						.status(404)
+						.json({ message: "No thoughts found with this id!" });
 				}
 				res.json(thought);
 			})
@@ -69,11 +75,14 @@ const thoughtController = {
 			});
 	},
 
+	// deletes a specified thought and removes it from it's associated user
 	deleteThought(req, res) {
 		Thought.findOneAndDelete({ _id: req.params.thoughtId })
 			.then((thought) => {
 				if (!thought) {
-					return res.status(404).json({ message: "No thoughts with this id!" });
+					return res
+						.status(404)
+						.json({ message: "No thoughts found with this id" });
 				} else {
 					res.json(thought);
 				}
@@ -84,6 +93,7 @@ const thoughtController = {
 			});
 	},
 
+	// create a reaction to a specific thought
 	createReaction(req, res) {
 		Thought.findOneAndUpdate(
 			{ _id: req.params.thoughtId },
@@ -94,7 +104,7 @@ const thoughtController = {
 			.select("-__v")
 			.then((thought) => {
 				if (!thought) {
-					res.status(404).json({ message: "No thoughts with this id!" });
+					res.status(404).json({ message: "No thoughts found with this id" });
 					return;
 				} else {
 					res.json(thought);
@@ -106,6 +116,7 @@ const thoughtController = {
 			});
 	},
 
+	// delete specified reaction and remove it from associated thought
 	deleteReaction(req, res) {
 		Thought.findOneAndUpdate(
 			{ _id: req.params.thoughtId },
@@ -114,7 +125,9 @@ const thoughtController = {
 		)
 			.then((thought) => {
 				if (!thought) {
-					return res.status(404).json({ message: "No thoughts with this id!" });
+					return res
+						.status(404)
+						.json({ message: "No thoughts found with this id" });
 				} else {
 					res.json(thought);
 				}

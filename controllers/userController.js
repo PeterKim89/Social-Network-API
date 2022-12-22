@@ -1,6 +1,7 @@
 const { User } = require("../models");
 
 const userController = {
+	// gets all users with associated thoughts, and friends/friend count
 	getUsers(req, res) {
 		User.find()
 			.populate({
@@ -17,6 +18,7 @@ const userController = {
 			});
 	},
 
+	// gets specified user with only their associated thoughts, and friends/friend count
 	getSingleUser(req, res) {
 		User.findOne({ _id: req.params.id })
 			.select("-__v")
@@ -24,7 +26,9 @@ const userController = {
 			.populate("thoughts")
 			.then((user) => {
 				if (!user) {
-					return res.status(404).json({ message: "No user with this id!" });
+					return res
+						.status(404)
+						.json({ message: "No users found with this id!" });
 				} else {
 					res.json(user);
 				}
@@ -35,6 +39,7 @@ const userController = {
 			});
 	},
 
+	// creates a new user with a specified username and a valid email
 	createUser(req, res) {
 		User.create(req.body)
 			.then((user) => {
@@ -46,6 +51,7 @@ const userController = {
 			});
 	},
 
+	// updates a specified user id with a new username
 	updateUser(req, res) {
 		User.updateOne({ _id: req.params.id }, { username: req.body.username })
 			.then((user) => {
@@ -57,11 +63,15 @@ const userController = {
 			});
 	},
 
+	// deletes a specified user id and any thoughts associated with it
+	// will also remove them from any friends lists
 	deleteUser(req, res) {
 		User.findOneAndDelete({ _id: req.params.id })
 			.then((user) => {
 				if (!user) {
-					return res.status(404).json({ message: "No user with this id!" });
+					return res
+						.status(404)
+						.json({ message: "No users found with this id!" });
 				} else {
 					res.json(user);
 				}
@@ -72,6 +82,7 @@ const userController = {
 			});
 	},
 
+	// adds specified user to another user's friends list
 	createFriend(req, res) {
 		User.findOneAndUpdate(
 			{ _id: req.params.id },
@@ -82,7 +93,9 @@ const userController = {
 			.select("-__v")
 			.then((user) => {
 				if (!user) {
-					return res.status(404).json({ message: "No User with this id!" });
+					return res
+						.status(404)
+						.json({ message: "No users found with this id!" });
 				} else {
 					res.json(user);
 				}
@@ -93,6 +106,7 @@ const userController = {
 			});
 	},
 
+	// deletes specified user from another user's friends list
 	deleteFriend(req, res) {
 		User.findOneAndUpdate(
 			{ _id: req.params.id },
@@ -103,7 +117,9 @@ const userController = {
 			.select("-__v")
 			.then((user) => {
 				if (!user) {
-					return res.status(404).json({ message: "No User with this id!" });
+					return res
+						.status(404)
+						.json({ message: "No users found with this id!" });
 				} else {
 					res.json(user);
 				}
